@@ -34,5 +34,4 @@ class RedactingFormatter(logging.Formatter):
         """ Format method
             """
         return filter_datum(self.fields, self.REDACTION,
-                            super().format(record), self.SEPARATOR)        
-
+                            super().format(record), self.SEPARATOR)
