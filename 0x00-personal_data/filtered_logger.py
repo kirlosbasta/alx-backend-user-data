@@ -2,8 +2,8 @@
 '''0. Regex-ing'''
 import re
 import logging
-import os
-import mysql.connector
+from os import environ
+from mysql.connector import connection
 from typing import List
 
 
@@ -53,19 +53,20 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> mysql.connector.connection.MySQLConnection:
-    """ Implement db conectivity
+def get_db() -> connection.MySQLConnection:
     """
-    psw = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
-    username = os.environ.get('PERSONAL_DATA_DB_USERNAME', "root")
-    host = os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
-    db_name = os.environ.get('PERSONAL_DATA_DB_NAME')
-    conn = mysql.connector.connection.MySQLConnection(
-        host=host,
-        database=db_name,
+    Connect to mysql server with environmental vars
+    """
+    username = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+    db_host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = environ.get("PERSONAL_DATA_DB_NAME")
+    connector = connection.MySQLConnection(
         user=username,
-        password=psw)
-    return conn
+        password=password,
+        host=db_host,
+        database=db_name)
+    return connector
 
 
 def main() -> None:
