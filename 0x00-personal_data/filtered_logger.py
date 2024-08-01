@@ -2,6 +2,8 @@
 '''0. Regex-ing'''
 import re
 import logging
+import os
+from mysql.connector import connection
 from typing import List
 
 
@@ -49,3 +51,16 @@ def get_logger() -> logging.Logger:
     stream.setFormatter(RedactingFormatter(PII_FIELDS))
     logger.addHandler(stream)
     return logger
+
+
+def get_db() -> connection.MySQLConnection:
+    '''return mysql connector to the database'''
+    user = os.environ.get('PERSONAL_DATA_DB_USERNAME') or 'root'
+    password = os.environ.get('PERSONAL_DATA_DB_PASSWORD') or ''
+    host = os.environ.get('PERSONAL_DATA_DB_HOST') or 'localhost'
+    database = os.environ.get('PERSONAL_DATA_DB_NAME')
+    return connection.MySQLConnection(
+        user=user,
+        password=password,
+        host=host,
+        database=database)
