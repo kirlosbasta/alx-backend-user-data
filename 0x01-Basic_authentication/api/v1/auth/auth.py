@@ -16,7 +16,14 @@ class Auth():
         if path is None or not excluded_paths:
             return True
         for excluded_path in excluded_paths:
-            if re.search(excluded_path, path) is not None:
+            pattern = ''
+            if excluded_path[-1] == '*':
+                pattern = '{}.*'.format(excluded_path[0:-1])
+            elif excluded_path[-1] == '/':
+                pattern = '{}/*'.format(excluded_path[0:-1])
+            else:
+                pattern = '{}/*'.format(excluded_path)
+            if re.search(pattern, path) is not None:
                 return False
         return True
 
