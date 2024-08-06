@@ -20,26 +20,27 @@ class BasicAuth(Auth):
             return None
         return authorization_header[6:]
 
-    def decode_base64_authorization_header(self,
-                                           base64_authorization_header: str
-                                            )-> str:
+    def decode_base64_authorization_header(self, header: str) -> str:
         '''decode base64 authorization header to a utf-8 string'''
-        if base64_authorization_header is None:
+        if header is None:
             return None
-        if not isinstance(base64_authorization_header, str):
+        if not isinstance(header, str):
             return None
         try:
-            return (base64.b64decode(s=base64_authorization_header, validate=True)).decode('utf-8')
+            return (base64.b64decode(s=header, validate=True)).decode('utf-8')
         except Exception:
             return None
 
-    def extract_user_credentials(self, decoded_base64_authorization_header: str) -> (str, str):
-        '''separate username and password from decoded_base64_authorization_header'''
-        if decoded_base64_authorization_header is None:
+    def extract_user_credentials(self,
+                                 base64_header: str) -> (str, str):
+        '''
+        separate username and password from decoded_base64_authorization_header
+        '''
+        if base64_header is None:
             return None, None
-        if not isinstance(decoded_base64_authorization_header, str):
+        if not isinstance(base64_header, str):
             return None, None
-        if ':' not in decoded_base64_authorization_header:
+        if ':' not in base64_header:
             return None, None
-        username, password = decoded_base64_authorization_header.split(':', maxsplit=1)
+        username, password = base64_header.split(':', maxsplit=1)
         return username, password
