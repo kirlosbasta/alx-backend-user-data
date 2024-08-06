@@ -5,6 +5,8 @@
 from api.v1.auth.auth import Auth
 from flask import request
 import base64
+from typing import TypeVar
+from models.user import User
 
 
 class BasicAuth(Auth):
@@ -44,3 +46,43 @@ class BasicAuth(Auth):
             return None, None
         username, password = base64_header.split(':', maxsplit=1)
         return username, password
+
+    def user_object_from_credentials(self,
+                                     user_email: str,
+                                     user_pwd: str) -> TypeVar('User'):
+        '''return user object if found and user_pwd matches'''
+        if user_email is None or not isinstance(user_email, str):
+            return None
+        if user_pwd is None or not isinstance(user_pwd, str):
+            return None
+        users = User.search({'email': user_email})
+        if len(users) == 0:
+            return None
+        user = users[0]
+        if not isinstance(user, User):
+            return None
+        if not user.is_valid_password(user_pwd):
+            return None
+        return user
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        '''return the user if exists otherwise None'''
+        authorization = self.authorization_header(request)
+        if authorization is None:
+            return None
+        authorization_data = self.\
+            extract_base64_authorization_header(authorization)
+        if authorization_data is None:
+            return None
+        authorization_data_decoded = self.\
+            decode_base64_authorization_header(authorization_data)
+        if authorization_data_decoded is None:
+            return None
+        email, password = self.\
+            extract_user_credentials(authorization_data_decoded)
+        if email is None or password is None:
+            return None
+        user = self.user_object_from_credentials(email, password)
+        if user is None:
+            return None
+        return user
