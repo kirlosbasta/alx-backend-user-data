@@ -15,8 +15,6 @@ class Auth():
         '''pass to later'''
         if path is None or not excluded_paths:
             return True
-        if path[-1] != '/':
-            path += '/'
         for excluded_path in excluded_paths:
             if re.search(excluded_path, path) is not None:
                 return False
