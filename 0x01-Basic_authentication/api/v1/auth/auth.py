@@ -20,7 +20,7 @@ class Auth():
             if excluded_path[-1] == '*':
                 pattern = '{}.*'.format(excluded_path[0:-1])
             else:
-                pattern = excluded_path
+                pattern = excluded_path[:-1]
             if re.search(pattern, path) is not None:
                 return False
         return True
