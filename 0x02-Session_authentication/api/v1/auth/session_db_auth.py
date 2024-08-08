@@ -4,6 +4,7 @@ Session DB Authentication system
 '''
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
+import datetime
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -26,6 +27,12 @@ class SessionDBAuth(SessionExpAuth):
         if len(user_sessions) == 0:
             return None
         user_session = user_sessions[0]
+        created_at = user_session.created_at
+        if created_at is None:
+            return None
+        if created_at + datetime.timedelta(seconds=self.session_duration) <\
+                datetime.datetime.now():
+            return None
         return user_session.user_id
 
     def destroy_session(self, request=None):
