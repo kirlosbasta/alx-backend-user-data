@@ -4,11 +4,12 @@ Session DB Authentication system
 '''
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
-import datetime
+from datetime import datetime, timedelta
 
 
 class SessionDBAuth(SessionExpAuth):
     '''Inherent from SessionExpAuth and store session in a file'''
+
     def create_session(self, user_id=None):
         '''create a Session and store it in a file'''
         session_id = super().create_session(user_id)
@@ -21,6 +22,7 @@ class SessionDBAuth(SessionExpAuth):
 
     def user_id_for_session_id(self, session_id=None):
         '''return user_id from session_id'''
+        UserSession.load_from_file()
         if session_id is None:
             return None
         user_sessions = UserSession.search({'session_id': session_id})
@@ -30,8 +32,8 @@ class SessionDBAuth(SessionExpAuth):
         created_at = user_session.created_at
         if created_at is None:
             return None
-        if created_at + datetime.timedelta(seconds=self.session_duration) <\
-                datetime.datetime.now():
+        timeframe = created_at + timedelta(seconds=self.session_duration)
+        if timeframe < datetime.now():
             return None
         return user_session.user_id
 
