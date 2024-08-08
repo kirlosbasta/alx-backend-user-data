@@ -42,7 +42,6 @@ def before_request_handeler():
                '/api/v1/unauthorized/',
                '/api/v1/forbidden/',
                '/api/v1/auth_session/login/']
-    print(auth.user_id_by_session_id)
     if not auth.require_auth(request.path, exculde):
         return
     if auth.authorization_header(request) is None and\
