@@ -15,8 +15,10 @@ class SessionDBAuth(SessionExpAuth):
         session_id = super().create_session(user_id)
         if session_id is None:
             return None
+        time = (datetime.now()).strftime("%Y-%m-%dT%H:%M:%S")
         user_session = UserSession(**{'session_id': session_id,
-                                      'user_id': user_id})
+                                      'user_id': user_id,
+                                      'created_at': time})
         user_session.save()
         return session_id
 
