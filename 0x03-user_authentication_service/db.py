@@ -51,7 +51,8 @@ class DB:
             raise NoResultFound
         return user
 
-    def update_user(self, user_id: int, *args, **kwargs) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
+        '''update a user if found'''
         user = self.find_user_by(id=user_id)
         for key, val in kwargs.items():
             if key in USER_COLUMNS:
