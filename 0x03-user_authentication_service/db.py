@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """DB module
 """
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.session import Session
 from user import Base, User
+
+
+USER_COLUMNS = [column.name for column in (inspect(User)).c]
 
 
 class DB:
@@ -51,7 +54,7 @@ class DB:
     def update_user(self, user_id: int, *args, **kwargs) -> None:
         user = self.find_user_by(id=user_id)
         for key, val in kwargs.items():
-            if hasattr(user, key):
+            if key in USER_COLUMNS:
                 setattr(user, key, val)
             else:
                 raise ValueError
