@@ -39,7 +39,7 @@ class DB:
         self._session.commit()
         return user
 
-    def find_user_by(self, *args: List, **kwargs: Dict) -> User:
+    def find_user_by(self, *args, **kwargs) -> User:
         '''return the first user match kwargs'''
         try:
             user = self._session.query(User).filter_by(**kwargs).first()
