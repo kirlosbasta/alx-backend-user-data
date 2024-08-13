@@ -10,7 +10,7 @@ from sqlalchemy.orm.session import Session
 from user import Base, User
 
 
-USER_COLUMNS = [column.name for column in (inspect(User)).c]
+# USER_COLUMNS = [column.name for column in (inspect(User)).c]
 
 
 class DB:
@@ -55,7 +55,7 @@ class DB:
         '''update a user if found'''
         user = self.find_user_by(id=user_id)
         for key, val in kwargs.items():
-            if key in USER_COLUMNS:
+            if hasattr(user, key):
                 setattr(user, key, val)
             else:
                 raise ValueError
