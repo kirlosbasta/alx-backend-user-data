@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''App Dirver Module'''
-from flask import Flask, jsonify, request, abort, make_response
+from flask import (Flask, jsonify, request, abort,
+                   make_response, url_for, redirect)
 from auth import Auth
 
 
@@ -38,6 +39,17 @@ def login() -> str:
     res = make_response(jsonify({"email": email, "message": "logged in"}))
     res.set_cookie("session_id", session_id)
     return res
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout() -> str:
+    '''Logout a user'''
+    session_id = request.cookies.get("session_id")
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403)
+    AUTH.destroy_session(user_id=user.id)
+    return redirect(url_for('bienvenue'))
 
 
 if __name__ == "__main__":
